@@ -106,33 +106,56 @@ async function loadBooks() {
     updateAverageRating(books);
   } catch (error) {
     console.error('Error loading books:', error);
-    booksList.innerHTML = '<p class="text-red-500 text-center py-8">Failed to load books. Please refresh the page.</p>';
+    booksList.innerHTML = `
+      <div class="text-center py-16">
+        <div class="text-5xl mb-4">⚠️</div>
+        <p class="text-red-500 text-lg font-medium">Failed to load books</p>
+        <p class="text-gray-500 text-sm mt-2">Please refresh the page</p>
+      </div>
+    `;
   }
 }
 
 // Display books in the UI
 function displayBooks(books) {
   if (books.length === 0) {
-    booksList.innerHTML = '<p id="emptyState" class="text-gray-500 text-center py-8">No books added yet. Start by adding your first book!</p>';
+    booksList.innerHTML = `
+      <div id="emptyState" class="text-center py-16 pulse-slow">
+        <div class="text-6xl mb-4">📖</div>
+        <p class="text-gray-600 text-lg font-medium">No books added yet</p>
+        <p class="text-gray-500 text-sm mt-2">Start by adding your first book!</p>
+      </div>
+    `;
     return;
   }
 
   booksList.innerHTML = books
     .map(
       (book) => `
-    <div class="border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow bg-gray-50" data-book-id="${escapeHtml(book.id)}">
-      <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+    <div class="book-card bg-white/90 backdrop-blur-sm border-2 border-white/50 rounded-2xl p-6 shadow-lg hover:shadow-2xl transition-all" data-book-id="${escapeHtml(book.id)}">
+      <div class="flex flex-col md:flex-row md:items-start md:justify-between gap-4">
         <div class="flex-1">
-          <h3 class="text-lg font-semibold text-gray-800">${escapeHtml(book.title)}</h3>
-          <p class="text-gray-600 mt-1">by ${escapeHtml(book.author)}</p>
-          ${book.rating ? `<div class="mt-2">${generateStarRating(book.rating)}</div>` : ''}
-          ${book.note ? `<p class="text-gray-700 mt-2 text-sm">${escapeHtml(book.note)}</p>` : ''}
-          <p class="text-gray-500 text-xs mt-2">
-            Added: ${formatDate(book.createdAt)}
-            ${book.updatedAt ? ` | Updated: ${formatDate(book.updatedAt)}` : ''}
-          </p>
+          <div class="flex items-start gap-3 mb-2">
+            <div class="text-3xl mt-1">📘</div>
+            <div class="flex-1">
+              <h3 class="text-xl font-bold text-gray-800 mb-1">${escapeHtml(book.title)}</h3>
+              <p class="text-gray-600 text-sm flex items-center gap-2">
+                <span>✍️</span>
+                <span class="font-medium">${escapeHtml(book.author)}</span>
+              </p>
+            </div>
+          </div>
+          ${book.rating ? `<div class="mt-3 mb-2">${generateStarRating(book.rating)}</div>` : ''}
+          ${book.note ? `<p class="text-gray-700 mt-3 p-3 bg-purple-50/50 rounded-lg border border-purple-100 text-sm">${escapeHtml(book.note)}</p>` : ''}
+          <div class="flex items-center gap-3 mt-4 text-xs text-gray-500">
+            <span class="flex items-center gap-1">
+              <span>📅</span>
+              Added: ${formatDate(book.createdAt)}
+            </span>
+            ${book.updatedAt ? `<span class="flex items-center gap-1"><span>🔄</span>Updated: ${formatDate(book.updatedAt)}</span>` : ''}
+          </div>
         </div>
-        <div class="flex gap-2">
+        <div class="flex gap-3 md:flex-col md:items-end">
           <button
             data-action="edit"
             data-book-id="${escapeHtml(book.id)}"
@@ -140,16 +163,16 @@ function displayBooks(books) {
             data-book-author="${escapeHtml(book.author)}"
             data-book-rating="${book.rating || ''}"
             data-book-note="${escapeHtml(book.note || '')}"
-            class="edit-btn px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors text-sm"
+            class="edit-btn px-5 py-2.5 bg-gradient-to-r from-purple-500 to-indigo-500 text-white rounded-xl hover:from-purple-600 hover:to-indigo-600 focus:outline-none focus:ring-4 focus:ring-purple-300 transition-all shadow-md hover:shadow-lg transform hover:scale-105 font-semibold text-sm"
           >
-            Edit
+            ✏️ Edit
           </button>
           <button
             data-action="delete"
             data-book-id="${escapeHtml(book.id)}"
-            class="delete-btn px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 transition-colors text-sm"
+            class="delete-btn px-5 py-2.5 bg-gradient-to-r from-red-500 to-pink-500 text-white rounded-xl hover:from-red-600 hover:to-pink-600 focus:outline-none focus:ring-4 focus:ring-red-300 transition-all shadow-md hover:shadow-lg transform hover:scale-105 font-semibold text-sm"
           >
-            Delete
+            🗑️ Delete
           </button>
         </div>
       </div>
